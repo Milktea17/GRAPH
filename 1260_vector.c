@@ -6,17 +6,24 @@
 
 #include<stdio.h>
 #include<queue>
+#include<vector>
 #include<string.h>
 #include<algorithm>
-#include<iostream>
 using namespace std;
 
-int N,M,V;
-int array[1001][1001];
+int N,M,V,j;
 bool check[1001];
+
+vector<vector<int>> vec1;
+vector<int> vec2;
 
 int dfs(int now);
 int bfs(int V);
+
+bool desc(int a, int b)
+{
+	return a<b;
+}
 
 int main(){
 
@@ -26,22 +33,35 @@ int main(){
 		printf("[N:%d]N은 1~1000로 입력해주세요\n",N);
 	if( M < 1 || M > 10000)
 		printf("[M:%d]M은 1~10000로 입력해주세요\n",M);
-	if( V < 1 )
-		printf("[V:%d]V은 1이상으로 입력해주세요\n",V);
+	if( V < 1 || V > N )
+		printf("[V:%d]V은 1이상, N이하로 입력해주세요\n",V);
 
 	int x,y;
+
+	vec1.resize(N+1);
+	vec2.resize(N+1);
 
 	for(int i=0;i<M;i++)
 	{
 		scanf("%d %d", &x, &y);
-		array[x][y]=1;
-		array[y][x]=1;
+		vec1[x].push_back(y);
+		vec1[y].push_back(x);
+	}
+
+	for(int i=1;i<=N;i++) //오름차순 정렬
+	{
+		sort(vec1[i].begin(),vec1[i].end());
 	}
 
 	memset(check,false,sizeof(check));//시작하기 전 check 초기화
 	dfs(V);
 	printf("\n");
-
+/*
+	for(int i=1;i<=N;i++) //내림차순 정렬
+	{
+		sort(vec1[i].begin(),vec1[i].end(),desc);
+	}
+*/
 	memset(check,false,sizeof(check));
 	bfs(V);
 	printf("\n");
@@ -51,17 +71,21 @@ int main(){
 
 int dfs(int now)
 {	
-	check[now]=true; //지나간 정점 
+	check[now]=true; //지나간 정점
 	printf("%d ",now); //지나간 정점 출력
-	
-	for(int i = 1; i <= N; i++) //정점갯수만큼 돌린다
-	{
-		// 간선과 이어져있으면서 지나가지 않은 정점
-		// 출력은 재귀돌면서 실행함
-		 if((array[now][i] != 0) && (check[i] == false))
-			dfs(i);
-	}
 
+	for(int i=0;i<vec1[now].size();i++) 
+	{
+		j=vec1[now][i];
+		
+//		printf("vec1[%d][%d]:%d\n",now,i,vec1[now][i]);		
+		if(check[j] == false) //인접배열과 달리 이미 값이 있기 때문에 체크만하면됨
+		{	 
+ 			dfs(j);
+		}
+
+
+	}
 	return 0;
 }
 
@@ -78,13 +102,13 @@ int bfs(int V)
 		q.pop();
 		printf("%d ",now_b); //지나간 정점 출력
 
-		for(int i=1;i<=N;i++) //정점갯수만큼 돌린다
+		for(int i=0;i<vec1[now_b].size();i++) //정점갯수만큼 돌린다
 		{
-			// 간선과 이어져있으면서 지나가지 않은 정점
-			if((array[now_b][i] == 1) && (check[i] == false))
+			j=vec1[now_b][i];
+			if(check[j] == false)
 			{
-				check[i]=true; //지나간 정점 
-				q.push(i); //간선있는 한 행을 다 넣는다
+				check[j]=true; //지나간 정점 
+				q.push(j); //간선있는 한 행을 다 넣는다
 			}
 		}
 	}
