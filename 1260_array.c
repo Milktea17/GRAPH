@@ -12,7 +12,7 @@
 using namespace std;
 
 int N,M,V;
-int array[1001][1001];
+int array[1001][1001]; //전역으로 초기화까지 ok
 bool check[1001];
 
 int dfs(int now);
