@@ -79,4 +79,4 @@ int bfs()
 			
 	}
 	return check[N][M];
-}
+} 
